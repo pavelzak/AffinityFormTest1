@@ -1,0 +1,212 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>CRUD Roster ops</title>
+    <link href="/Content/bootstrap.css" rel="stylesheet"/>
+    <link href="/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />    
+    <link href="/Content/site.css" rel="stylesheet"/>
+
+    
+
+    <!--<script src="/Scripts/modernizr-2.6.2.js"></script>-->
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Affinity</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Help">API</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+
+        <div class="page-header">
+            <h1>Test Example</h1>
+            <!--<p class="lead">bla-bla</p>
+            <p><a href="#" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>-->
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Getting started</h2>
+                <p>
+                    ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
+                    a broad range of clients, including browsers and mobile devices. ASP.NET Web API
+                    is an ideal platform for building RESTful applications on the .NET Framework.
+                </p>
+                
+            </div>
+
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs">
+                    <li role="presentation"><a href="index.html">Login/Register</a></li>
+                    <li role="presentation" class="active" ><a href="#">CRUD Roster</a></li>
+                    <li role="presentation"><a href="Roster.html">Roster List</a></li>
+                    <li role="presentation"><a href="ClockOnOff.html">Clock On Data</a></li>
+                </ul>
+            </div>
+        </div>
+        <p></p>
+        <div class="row">
+
+        <div class="row">
+            <div class="col-md-9">
+                <h2>CRUD operations for Roster</h2>
+                <form id="RosterForm">
+                    <div class="row form-group">
+                        <label for="iRosterId" class="col-md-2">Roster Id</label>
+                        <input id="iRosterId" type="text" class="col-md-7"/>
+                        <a class="btn btn-default btn-sm" onclick="newRosterId();" >New Id </a>
+                    </div>
+                    <div class="row form-group">
+                        <label for="taRosterBody" class="col-md-2">Roster Body</label>
+                        
+                        <textarea id="taRosterBody" class="col-md-9" cols="80" rows="10"></textarea>
+                        <a class="btn btn-default btn-sm" onclick="resetRosterBody();">Reset Body </a> 
+                        
+                    </div>
+
+
+                    <div class="form-group row">
+                        <a class="btn btn-primary col-sm-offset-2" ref="#" onclick="getRosterById()">Get By Id</a>
+                        <a class="btn btn-success " ref="#" onclick="postRoster()">CReate / POST</a>
+                        <a class="btn btn-warning " ref="#" onclick="putRoster()">Update / PUT</a>
+                        <a class="btn btn-danger " ref="#" onclick="delRoster()">Delete</a>
+                        
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+            <div class="row">
+                <div id="Status" style="display: none;"></div>
+            </div>
+
+
+
+            <hr />
+            <footer>
+                <p>&copy; 2016 - (c)Reserved</p>
+            </footer>
+        </div>
+
+    <script src="/Scripts/jquery-1.10.2.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/respond.js"></script>
+    <script src="Scripts/Account.js"></script>
+    <script src="Scripts/Messages.js"></script>
+    <script src="Scripts/Roster.js"></script>
+    <script src="Scripts/DateConvert.js"></script>
+    <script src="Scripts/utils.js"></script>
+
+<script >
+    var setDateTime = function(iD, iT, dt) {
+        var dd = dt.substr(0, 4) + '-' + dt.substr(4, 2) + '-' + dt.substr(6, 2);
+        iD.val(dd);
+        var tt = dt.substr(9, 2) + ':' + dt.substr(11, 2);
+        iT.val(tt);
+    }
+
+    var getDateTime = function (iD, iT) {
+        var dd = iD.val();
+            dd = dd.substr(0, 4) + dd.substr(5, 2)  + dd.substr(8, 2);
+        var tt = iT.val();
+            tt = tt.substr(0, 2)+ tt.substr(3, 2);
+        return dd + 'T' + tt;
+    }
+
+    $(document).ready(function () {
+
+
+    });
+
+    var newRosterId= function() {
+        $('#iRosterId').val(guid());
+    }
+
+    var resetRosterBody = function () {
+        if (!$('#iRosterId').val()) {
+            newRosterId(); }
+        var s = '{\n' +
+            '"Id" : "' + $('#iRosterId').val() + '",\n' +
+            '"EmployerId" : "0EB90149-55F6-4FAF-8F7F-D9A473F73E3E",\n' +
+            '"EmployerName" : "Test Employer REST1",\n' +
+            '"SiteName" : "Test Site 1",\n' +
+            '"SiteAddress" : "Site Address 1",\n' +
+            '"SiteDept" : "Department ",\n' +
+            '"Position" : "Position 1",\n' +
+            '"EmployeeEmail" : "test@email1.com",\n' +
+            '"DateTimeOn" : "20160711T1800",\n' +
+            '"DateTimeOff" : "20160811T0800"\n' +
+            '}';
+        $('#taRosterBody').val(s);
+    }
+
+    var displayErr = function (data, status) {
+        errorMessage("<strong>Error!</strong> Status=" + status + "\n Text=" + data.responseText);
+    }
+
+    
+
+    var getRosterById = function () {
+        var id = $('#iRosterId').val();
+
+        reqRosterById(id, function (data, status) {
+            var t = JSON.stringify(data).replace('{', '{\n').replace('}', '\n}').replaceAll(',',',\n');
+        
+            $('#taRosterBody').val(t);
+            successMesssage("Roster successfully retrieved");
+        }, displayErr);
+    }
+
+    var postRoster = function () {
+        var b = JSON.parse($('#taRosterBody').val());
+        reqRosterPOST(b, function (data, status) {
+            $('#taRosterBody').val(null);
+            successMesssage("Roster Created");
+        }, displayErr);
+    }
+
+    var putRoster = function () {
+        var id = $('#iRosterId').val();
+        var b = JSON.parse($('#taRosterBody').val());
+        reqRosterPUT(id, b, function (data, status) {
+            $('#taRosterBody').val(null);
+            successMesssage("Roster Updated <Strong>Note:</Strong> Employer ID and name are not getting updated");
+        }, displayErr);
+    }
+
+    var delRoster = function () {
+        var id = $('#iRosterId').val();
+        
+        reqRosterDEL(id, function (data, status) {
+            $('#taRosterBody').val(null);
+            successMesssage("Roster Deleted");
+        }, displayErr);
+    }
+
+</script>
+    </div>
+
+
+</body>
+</html>
