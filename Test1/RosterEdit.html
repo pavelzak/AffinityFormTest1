@@ -70,19 +70,75 @@
             <div class="col-md-9">
                 <h2>CRUD operations for Roster</h2>
                 <form id="RosterForm">
+
+                    <!-- Id -->
                     <div class="row form-group">
                         <label for="iRosterId" class="col-md-2">Roster Id</label>
-                        <input id="iRosterId" type="text" class="col-md-7"/>
+                        <input id="iRosterId" type="text" class="col-md-7 form-control"/>
                         <a class="btn btn-default btn-sm" onclick="newRosterId();" >New Id </a>
                     </div>
+
+                    <!-- Employer Id -->
                     <div class="row form-group">
-                        <label for="taRosterBody" class="col-md-2">Roster Body</label>
-                        
-                        <textarea id="taRosterBody" class="col-md-9" cols="80" rows="10"></textarea>
-                        <a class="btn btn-default btn-sm" onclick="resetRosterBody();">Reset Body </a> 
-                        
+                        <label for="iEmployerId" class="col-md-2">Employer Id</label>
+                        <input id="iEmployerId" type="text" class="col-md-7 form-control" />
                     </div>
 
+                    <!-- Employer Name -->
+                    <div class="row form-group">
+                        <label for="iEmployerName" class="col-md-2">Employer Name</label>
+                        <input id="iEmployerName" type="text" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- Site Name -->
+                    <div class="row form-group">
+                        <label for="iSiteName" class="col-md-2">Site Name</label>
+                        <input id="iSiteName" type="text" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- Site Address -->
+                    <div class="row form-group">
+                        <label for="iSiteAddress" class="col-md-2">Site Address</label>
+                        <input id="iSiteAddress" type="text" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- Site Dept -->
+                    <div class="row form-group">
+                        <label for="iSiteDept" class="col-md-2">Site Department</label>
+                        <input id="iSiteDept" type="text" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- Site Position -->
+                    <div class="row form-group">
+                        <label for="iSitePosition" class="col-md-2">Site Position</label>
+                        <input id="iSitePosition" type="text" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- Employee Email -->
+                    <div class="row form-group">
+                        <label for="iEmployeeEmail" class="col-md-2">Employee Email</label>
+                        <input id="iEmployeeEmail" type="email" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- DateTimeOn -->
+                    <div class="row form-group">
+                        <label for="iDateTimeOn" class="col-md-2">Date Time On</label>
+                        <input id="iDateTimeOn" type="datetime-local" class="col-md-7 form-control" />
+                    </div>
+
+                    <!-- DateTimeOff -->
+                    <div class="row form-group">
+                        <label for="iDateTimeOff" class="col-md-2">Date Time Off</label>
+                        <input id="iDateTimeOff" type="datetime-local" class="col-md-7 form-control" />
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="taRosterBody" class="col-md-2">Roster Body</label>
+                        <textarea id="taRosterBody" class="col-md-9" cols="80" rows="10"></textarea>
+                        <a class="btn btn-default btn-sm" onclick="resetRosterBody();">Reset Body </a> 
+                        <a class="btn btn-default btn-sm" onclick="copyToRosterBody();">Update Body</a>
+                        <!--<a class="btn btn-default btn-sm" onclick="copyFromRosterBody();">Update Controls</a> -->
+                    </div>
 
                     <div class="form-group row">
                         <a class="btn btn-primary col-sm-offset-2" ref="#" onclick="getRosterById()">Get By Id</a>
@@ -135,8 +191,6 @@
     }
 
     $(document).ready(function () {
-
-
     });
 
     var newRosterId= function() {
@@ -159,13 +213,64 @@
             '"DateTimeOff" : "20160811T0800"\n' +
             '}';
         $('#taRosterBody').val(s);
+        copyFromRosterBody();
+    }      
+
+    // YYYYMMDDThhmm -> YYYY-MM-DDThh:mm
+    var toRFC3339 = function (t) {
+        if (t) {
+            return t.substr(0, 4) + '-' + t.substr(4, 2) + '-' + t.substr(6, 2) + 'T' + t.substr(9, 2) + ':' + t.substr(11, 2);
+        } else { return t;}
+    }
+
+    // YYYY-MM-DDThh:mm -> YYYYMMDDThhmm
+    var fromRFC3339 = function (t) {
+        if (t) {
+            return t.substr(0, 4) + t.substr(5, 2) + t.substr(8, 2) + 'T' + t.substr(11, 2) + t.substr(14, 2);
+        } else { return t;}
+    }
+
+    var mapJsonIdToCtrlId = {
+        "Id": "iRosterId",
+        "EmployerId": "iEmployerId",
+        "EmployerName": "iEmployerName",
+        "SiteName": "iSiteName",
+        "SiteAddress": "iSiteAddress",
+        "SiteDept": "iSiteDept",
+        "Position": "iSitePosition",
+        "EmployeeEmail": "iEmployeeEmail",
+        "DateTimeOn": "iDateTimeOn",
+        "DateTimeOff": "iDateTimeOff",
+    };
+
+    var copyToRosterBody = function () {
+        var a = {};
+        for (var key in mapJsonIdToCtrlId) {
+            var v = $('#' + mapJsonIdToCtrlId[key]).val();
+            if (key.includes("DateTime")) {
+                a[key] = fromRFC3339(v);
+            } else {
+                a[key] = v;
+            }
+        }
+        $('#taRosterBody').val(JSON.stringify(a, null, 2));
+    }
+
+    var copyFromRosterBody = function () {
+        var a = JSON.parse($('#taRosterBody').val());
+        for (var key in mapJsonIdToCtrlId) {
+            var ctrl = $('#' + mapJsonIdToCtrlId[key]);
+            if (key.includes("DateTime")) {
+                ctrl.val(toRFC3339(a[key]));
+            } else {
+                ctrl.val(a[key]);
+            }
+        }
     }
 
     var displayErr = function (data, status) {
         errorMessage("<strong>Error!</strong> Status=" + status + "\n Text=" + data.responseText);
     }
-
-    
 
     var getRosterById = function () {
         var id = $('#iRosterId').val();
